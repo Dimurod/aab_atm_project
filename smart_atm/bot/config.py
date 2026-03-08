@@ -13,86 +13,113 @@ WEBHOOK_URL       = os.getenv("WEBHOOK_URL", "")
 WEBHOOK_PATH      = os.getenv("WEBHOOK_PATH", "/webhook")
 
 # ============================================
-#  Localization strings
+#  Localization strings  — МЯГКИЙ ТОН v2.0
 # ============================================
 
 TEXTS = {
     "ru": {
         # Welcome
-        "welcome":        "👋 Здравствуйте! Вы у банкомата по адресу:\n📍 *{address}*\n\nЧем я могу помочь?",
-        "welcome_unknown":"👋 Здравствуйте! Чем я могу помочь?",
-        "choose_lang":    "🌐 Выберите язык / Tilni tanlang / Choose language:",
-        "lang_saved":     "✅ Язык установлен: Русский",
+        "welcome": (
+            "👋 Здравствуйте! Вы у банкомата:\n"
+            "📍 *{address}*\n\n"
+            "Я помогу решить любой вопрос быстро и без лишних звонков. "
+            "Что случилось?"
+        ),
+        "welcome_unknown": (
+            "👋 Здравствуйте! Я — помощник Asia Alliance Bank.\n\n"
+            "Расскажите, чем я могу помочь?"
+        ),
+        "choose_lang":  "🌐 Выберите язык / Tilni tanlang / Choose language:",
+        "lang_saved":   "✅ Язык установлен: Русский",
 
         # Main menu
-        "main_menu":      "📋 Главное меню. Выберите проблему:",
-        "btn_card":       "💳 Проблема с картой",
-        "btn_cash":       "💵 Проблема с деньгами",
-        "btn_office":     "📍 Ближайший офис",
-        "btn_operator":   "📞 Связаться с оператором",
-        "btn_back":       "◀️ Назад",
-        "btn_home":       "🏠 В начало",
-        "btn_no_help":    "⚠️ Помощь не получена",
+        "main_menu":    "📋 Главное меню. Что произошло?",
+        "btn_card":     "💳 Проблема с картой",
+        "btn_cash":     "💵 Деньги не вышли",
+        "btn_office":   "📍 Ближайший офис",
+        "btn_operator": "📞 Позвать оператора",
+        "btn_back":     "◀️ Назад",
+        "btn_home":     "🏠 В начало",
+        "btn_no_help":  "⚠️ Проблема не решена",
 
         # Card held flow
-        "card_held_menu": "💳 Проблема с картой. Что случилось?",
-        "btn_card_held":  "🔒 Карта удержана банкоматом",
-        "btn_card_other": "❓ Другая проблема с картой",
+        "card_held_menu": "💳 Понимаю, это неприятная ситуация. Что именно случилось с картой?",
+        "btn_card_held":  "🔒 Карта застряла в банкомате",
+        "btn_card_other": "❓ Другая проблема",
 
-        "card_step1":     (
-            "📋 *Шаг 1 из 3 — Карта удержана*\n\n"
+        "card_step1": (
+            "😔 *Не волнуйтесь — мы разберёмся вместе!*\n\n"
+            "📋 *Шаг 1 из 3*\n\n"
             "Нажмите кнопку *«Отмена»* на экране банкомата.\n"
-            "⏱ Подождите *30 секунд* — банкомат может вернуть карту автоматически.\n\n"
+            "⏱ Подождите *30 секунд* — иногда банкомат возвращает карту автоматически.\n\n"
             "Карта вышла?"
         ),
-        "btn_yes":        "✅ Да, карта вышла",
-        "btn_no":         "❌ Нет, карта не вышла",
+        "btn_yes":      "✅ Да, карта вышла",
+        "btn_no":       "❌ Нет, не вышла",
 
-        "card_step1_ok":  "🎉 Отлично! Карта возвращена. Если есть другие вопросы — нажмите «В начало».",
+        "card_step1_ok": (
+            "🎉 *Отлично! Карта возвращена.*\n\n"
+            "Если почувствуете что-то странное при следующей оплате — "
+            "лучше перестрахуйтесь и временно заблокируйте карту в приложении.\n\n"
+            "Удачного вам дня! 😊"
+        ),
 
-        "card_step2":     (
-            "📋 *Шаг 2 из 3 — Временная блокировка*\n\n"
-            "Рекомендуем немедленно заблокировать карту через мобильное приложение *Asia Alliance Bank*.\n\n"
-            "1. Откройте приложение\n"
-            "2. Раздел «Карты» → выберите карту\n"
-            "3. Нажмите «Заблокировать временно»\n\n"
+        "card_step2": (
+            "📋 *Шаг 2 из 3 — Защитите деньги*\n\n"
+            "Пока карта внутри банкомата — важно сразу её заблокировать, "
+            "чтобы никто не смог воспользоваться.\n\n"
+            "Откройте приложение *Asia Alliance Bank*:\n"
+            "1️⃣ Раздел «Карты» → выберите карту\n"
+            "2️⃣ Нажмите «Заблокировать временно»\n\n"
             "Заблокировали?"
         ),
-        "btn_blocked":    "🔐 Карту заблокировал(а)",
-        "btn_no_app":     "📵 Нет приложения",
+        "btn_blocked":  "🔐 Да, заблокировал(а)",
+        "btn_no_app":   "📵 Нет приложения",
 
-        "card_step3":     (
-            "📋 *Шаг 3 из 3 — Получить карту в отделении*\n\n"
-            "Ваша карта будет храниться в ближайшем отделении банка.\n\n"
+        "card_step3": (
+            "📋 *Шаг 3 из 3 — Забрать карту в офисе*\n\n"
+            "Не переживайте — ваша карта в безопасности. "
+            "Она хранится в ближайшем отделении банка.\n\n"
             "🏦 *{branch_name}*\n"
             "📍 {branch_address}\n"
             "📞 {branch_phone}\n"
             "🕐 {branch_hours}\n\n"
             "[📍 Маршрут на карте]({maps_url})\n\n"
-            "Возьмите с собой паспорт."
+            "🪪 Возьмите с собой паспорт. Карту выдадут сразу."
         ),
 
         # No cash flow
-        "no_cash_start":  (
-            "💵 *Невыдача наличных*\n\n"
-            "Введите сумму (в сумах), которую банкомат не выдал.\n"
+        "no_cash_start": (
+            "😔 *Понимаем, как это неприятно.*\n\n"
+            "Не волнуйтесь — деньги никуда не пропадут, мы всё зафиксируем.\n\n"
+            "📸 *Прямо сейчас сделайте это:*\n"
+            "• Сфотографируйте экран банкомата\n"
+            "• Сохраните чек, если банкомат его выдал\n"
+            "• Сделайте скриншот уведомления от банка\n"
+            "• Подождите 2–3 минуты — иногда деньги выходят с задержкой\n\n"
+            "💬 Введите сумму (в сумах), которую банкомат не выдал.\n"
             "Например: *500000*"
         ),
-        "no_cash_invalid":"❌ Пожалуйста, введите только цифры. Например: *500000*",
-        "no_cash_confirm":(
-            "📝 Подтвердите заявку:\n\n"
+        "no_cash_invalid": (
+            "❌ Пожалуйста, введите только цифры.\n"
+            "Например: *500000*"
+        ),
+        "no_cash_confirm": (
+            "📝 *Проверьте данные заявки:*\n\n"
             "💰 Сумма: *{amount:,.0f} сум*\n"
             "🏧 Банкомат: {atm_id} — {address}\n"
             "🕐 Время: {time}\n\n"
-            "Создать заявку?"
+            "Всё верно? Создаём заявку?"
         ),
-        "btn_confirm":    "✅ Подтвердить",
-        "btn_cancel":     "❌ Отмена",
+        "btn_confirm":  "✅ Да, всё верно",
+        "btn_cancel":   "❌ Отмена",
+
         "ticket_created": (
             "✅ *Заявка создана!*\n\n"
             "📋 Номер обращения: *{ticket_no}*\n"
-            "⏳ Срок рассмотрения: 3 рабочих дня\n\n"
-            "Мы уведомим вас при изменении статуса."
+            "⏳ Срок рассмотрения: *3 рабочих дня*\n\n"
+            "Деньги будут возвращены на ваш счёт автоматически после проверки.\n"
+            "Мы уведомим вас при изменении статуса. 🙏"
         ),
 
         # Office
@@ -106,145 +133,286 @@ TEXTS = {
         ),
 
         # Operator
-        "operator_wait":  (
-            "📞 *Запрос оператора отправлен*\n\n"
-            "Среднее время ожидания: 2–5 минут.\n"
-            "Оператор напишет вам в этом чате."
+        "operator_wait": (
+            "📞 *Оператор уже получил ваш запрос*\n\n"
+            "Среднее время ожидания: *2–5 минут*.\n"
+            "Оператор напишет вам прямо в этом чате.\n\n"
+            "Пожалуйста, оставайтесь на связи 🙏"
         ),
 
         # Escalation
-        "escalated":      (
-            "⚠️ *Ваше обращение передано старшему оператору*\n\n"
-            "Номер обращения: *{ticket_no}*\n"
-            "Ожидайте звонка или сообщения в течение 15 минут."
+        "escalated": (
+            "⚠️ *Ваше обращение передано старшему специалисту*\n\n"
+            "📋 Номер обращения: *{ticket_no}*\n\n"
+            "Мы понимаем, что ситуация неприятная. "
+            "Специалист свяжется с вами в течение *15 минут*. "
+            "Приносим извинения за неудобство."
         ),
 
         # Operator message prefix
         "operator_prefix": "👨‍💼 *Оператор Asia Alliance Bank:*\n\n",
 
         # Errors
-        "error_atm":      "❌ Банкомат не найден. Попробуйте отсканировать QR-код снова.",
-        "error_general":  "❌ Произошла ошибка. Попробуйте позже или свяжитесь с оператором.",
+        "error_atm":     "❌ Банкомат не найден. Попробуйте отсканировать QR-код ещё раз.",
+        "error_general": "❌ Что-то пошло не так. Попробуйте позже или нажмите «Позвать оператора».",
     },
 
-    # ---- UZBEK ----
+    # ==============================
+    #  UZBEK
+    # ==============================
     "uz": {
-        "welcome":        "👋 Salom! Siz bankomat yonida turibsiz:\n📍 *{address}*\n\nQanday yordam bera olaman?",
-        "welcome_unknown":"👋 Salom! Qanday yordam bera olaman?",
-        "choose_lang":    "🌐 Tilni tanlang:",
-        "lang_saved":     "✅ Til saqlandi: O'zbekcha",
-        "main_menu":      "📋 Asosiy menyu. Muammoni tanlang:",
-        "btn_card":       "💳 Karta muammosi",
-        "btn_cash":       "💵 Pul muammosi",
-        "btn_office":     "📍 Yaqin filial",
-        "btn_operator":   "📞 Operator bilan bog'lanish",
-        "btn_back":       "◀️ Orqaga",
-        "btn_home":       "🏠 Bosh sahifa",
-        "btn_no_help":    "⚠️ Yordam olmadim",
-        "card_held_menu": "💳 Karta muammosi. Nima bo'ldi?",
-        "btn_card_held":  "🔒 Karta bankomat tomonidan ushlandi",
-        "btn_card_other": "❓ Boshqa karta muammosi",
-        "card_step1":     (
-            "📋 *1-qadam — Karta ushlandi*\n\n"
+        "welcome": (
+            "👋 Assalomu alaykum! Siz bankomat yonida turibsiz:\n"
+            "📍 *{address}*\n\n"
+            "Har qanday muammoni tez va qo'shimcha qo'ng'iroqlarsiz hal qilishga yordam beraman. "
+            "Nima bo'ldi?"
+        ),
+        "welcome_unknown": (
+            "👋 Assalomu alaykum! Men Asia Alliance Bank yordamchisiman.\n\n"
+            "Qanday yordam bera olaman?"
+        ),
+        "choose_lang":  "🌐 Tilni tanlang:",
+        "lang_saved":   "✅ Til saqlandi: O'zbekcha",
+
+        "main_menu":    "📋 Asosiy menyu. Nima bo'ldi?",
+        "btn_card":     "💳 Karta muammosi",
+        "btn_cash":     "💵 Pul chiqmadi",
+        "btn_office":   "📍 Yaqin filial",
+        "btn_operator": "📞 Operator chaqirish",
+        "btn_back":     "◀️ Orqaga",
+        "btn_home":     "🏠 Bosh sahifa",
+        "btn_no_help":  "⚠️ Muammo hal bo'lmadi",
+
+        "card_held_menu": "💳 Tushunaman, bu noqulay holat. Karta bilan nima bo'ldi?",
+        "btn_card_held":  "🔒 Karta bankomat ichida qoldi",
+        "btn_card_other": "❓ Boshqa muammo",
+
+        "card_step1": (
+            "😔 *Xavotir olmang — birga hal qilamiz!*\n\n"
+            "📋 *1-qadam 3 tadan*\n\n"
             "Bankomat ekranidagi *«Bekor qilish»* tugmasini bosing.\n"
             "⏱ *30 soniya* kuting — bankomat kartani avtomatik qaytarishi mumkin.\n\n"
             "Karta chiqdi mi?"
         ),
-        "btn_yes":        "✅ Ha, chiqdi",
-        "btn_no":         "❌ Yo'q, chiqmadi",
-        "card_step1_ok":  "🎉 Ajoyib! Karta qaytarildi.",
-        "card_step2":     (
-            "📋 *2-qadam — Vaqtincha bloklash*\n\n"
-            "*Asia Alliance Bank* ilovasida kartani bloklashni tavsiya etamiz.\n\n"
-            "1. Ilovani oching\n"
-            "2. «Kartalar» bo'limi → kartani tanlang\n"
-            "3. «Vaqtincha bloklash» tugmasini bosing\n\n"
+        "btn_yes":      "✅ Ha, chiqdi",
+        "btn_no":       "❌ Yo'q, chiqmadi",
+
+        "card_step1_ok": (
+            "🎉 *Ajoyib! Karta qaytarildi.*\n\n"
+            "Keyingi to'lovda biror g'ayritabiiy narsa sezсangiz — "
+            "ilovada kartani vaqtincha bloklashni maslahat beramiz.\n\n"
+            "Xayrli kun! 😊"
+        ),
+
+        "card_step2": (
+            "📋 *2-qadam — Pulni himoya qiling*\n\n"
+            "Karta bankomat ichida turganida uni zudlik bilan bloklash muhim — "
+            "begona odam foydalanmasin.\n\n"
+            "*Asia Alliance Bank* ilovasini oching:\n"
+            "1️⃣ «Kartalar» bo'limi → kartani tanlang\n"
+            "2️⃣ «Vaqtincha bloklash» tugmasini bosing\n\n"
             "Bloklanganmi?"
         ),
-        "btn_blocked":    "🔐 Karta bloklandi",
-        "btn_no_app":     "📵 Ilova yo'q",
-        "card_step3":     (
+        "btn_blocked":  "🔐 Ha, bloklandi",
+        "btn_no_app":   "📵 Ilova yo'q",
+
+        "card_step3": (
             "📋 *3-qadam — Filialdan kartani olish*\n\n"
-            "Kartangiz yaqin filialdа saqlanadi.\n\n"
+            "Xavotir olmang — kartangiz xavfsiz. "
+            "U yaqin filiálda saqlanadi.\n\n"
             "🏦 *{branch_name}*\n"
             "📍 {branch_address}\n"
             "📞 {branch_phone}\n"
             "🕐 {branch_hours}\n\n"
             "[📍 Yo'nalish]({maps_url})\n\n"
-            "Pasportingizni olib keling."
+            "🪪 Pasportingizni olib keling. Karta darhol beriladi."
         ),
-        "no_cash_start":  "💵 *Pul berilmadi*\n\nBerilmagan summani kiriting (so'mda).\nMasalan: *500000*",
-        "no_cash_invalid":"❌ Faqat raqam kiriting. Masalan: *500000*",
-        "no_cash_confirm":"📝 Arizani tasdiqlang:\n\n💰 Summa: *{amount:,.0f} so'm*\n🏧 Bankomat: {atm_id} — {address}\n🕐 Vaqt: {time}\n\nAriza yaratilsinmi?",
-        "btn_confirm":    "✅ Tasdiqlash",
-        "btn_cancel":     "❌ Bekor qilish",
-        "ticket_created": "✅ *Ariza yaratildi!*\n\n📋 Murojaat raqami: *{ticket_no}*\n⏳ Ko'rib chiqish muddati: 3 ish kuni",
-        "nearest_office": "🏦 *Yaqin filial*\n\n*{name}*\n📍 {address}\n📞 {phone}\n🕐 {hours}\n\n[📍 Yo'nalish]({maps_url})",
-        "operator_wait":  "📞 *Operator so'rovi yuborildi*\n\nKutish vaqti: 2–5 daqiqa.",
-        "escalated":      "⚠️ *Murojaat yuqori operatorga uzatildi*\n\nMurojaat raqami: *{ticket_no}*\n15 daqiqa ichida bog'lanishadi.",
-        "operator_prefix":"👨‍💼 *Asia Alliance Bank operatori:*\n\n",
-        "error_atm":      "❌ Bankomat topilmadi. QR-kodni qayta skanerlang.",
-        "error_general":  "❌ Xatolik yuz berdi. Keyinroq urinib ko'ring.",
+
+        "no_cash_start": (
+            "😔 *Tushunaman, bu juda noqulay.*\n\n"
+            "Xavotir olmang — pullar yo'qolmaydi, barchasini qayd etamiz.\n\n"
+            "📸 *Hoziroq shu ishlarni bajaring:*\n"
+            "• Bankomat ekranini suratga oling\n"
+            "• Chek chiqgan bo'lsa, saqlang\n"
+            "• Bank bildirishnomasi skrinshot qiling\n"
+            "• 2–3 daqiqa kuting — ba'zida pul kechikib chiqadi\n\n"
+            "💬 Bankomat bermagan summani kiriting (so'mda).\n"
+            "Masalan: *500000*"
+        ),
+        "no_cash_invalid": "❌ Iltimos, faqat raqam kiriting.\nMasalan: *500000*",
+        "no_cash_confirm": (
+            "📝 *Ariza ma'lumotlarini tekshiring:*\n\n"
+            "💰 Summa: *{amount:,.0f} so'm*\n"
+            "🏧 Bankomat: {atm_id} — {address}\n"
+            "🕐 Vaqt: {time}\n\n"
+            "Hammasi to'g'rimi? Ariza yarataymi?"
+        ),
+        "btn_confirm":  "✅ Ha, to'g'ri",
+        "btn_cancel":   "❌ Bekor qilish",
+
+        "ticket_created": (
+            "✅ *Ariza yaratildi!*\n\n"
+            "📋 Murojaat raqami: *{ticket_no}*\n"
+            "⏳ Ko'rib chiqish muddati: *3 ish kuni*\n\n"
+            "Pul tekshiruvdan so'ng hisobingizga avtomatik qaytariladi.\n"
+            "Holat o'zgarganda xabar beramiz. 🙏"
+        ),
+
+        "nearest_office": (
+            "🏦 *Yaqin filial*\n\n"
+            "*{name}*\n"
+            "📍 {address}\n"
+            "📞 {phone}\n"
+            "🕐 {hours}\n\n"
+            "[📍 Yo'nalish]({maps_url})"
+        ),
+
+        "operator_wait": (
+            "📞 *Operator so'rovingizni qabul qildi*\n\n"
+            "Kutish vaqti: *2–5 daqiqa*.\n"
+            "Operator shu chatda yozadi.\n\n"
+            "Iltimos, aloqada bo'ling 🙏"
+        ),
+
+        "escalated": (
+            "⚠️ *Murojaat yuqori mutaxassisga uzatildi*\n\n"
+            "📋 Murojaat raqami: *{ticket_no}*\n\n"
+            "Noqulaylik uchun uzr so'raymiz. "
+            "Mutaxassis *15 daqiqa* ichida bog'lanadi."
+        ),
+
+        "operator_prefix": "👨‍💼 *Asia Alliance Bank operatori:*\n\n",
+        "error_atm":     "❌ Bankomat topilmadi. QR-kodni qayta skanerlang.",
+        "error_general": "❌ Xatolik yuz berdi. Keyinroq urinib ko'ring yoki operator chaqiring.",
     },
 
-    # ---- ENGLISH ----
+    # ==============================
+    #  ENGLISH
+    # ==============================
     "en": {
-        "welcome":        "👋 Hello! You are at the ATM located at:\n📍 *{address}*\n\nHow can I help you?",
-        "welcome_unknown":"👋 Hello! How can I help you?",
-        "choose_lang":    "🌐 Choose your language:",
-        "lang_saved":     "✅ Language set: English",
-        "main_menu":      "📋 Main menu. Select your issue:",
-        "btn_card":       "💳 Card issue",
-        "btn_cash":       "💵 Cash issue",
-        "btn_office":     "📍 Nearest branch",
-        "btn_operator":   "📞 Contact operator",
-        "btn_back":       "◀️ Back",
-        "btn_home":       "🏠 Home",
-        "btn_no_help":    "⚠️ Issue not resolved",
-        "card_held_menu": "💳 Card issue. What happened?",
-        "btn_card_held":  "🔒 Card retained by ATM",
-        "btn_card_other": "❓ Other card problem",
-        "card_step1":     (
-            "📋 *Step 1 of 3 — Card Retained*\n\n"
+        "welcome": (
+            "👋 Hello! You are at the ATM located at:\n"
+            "📍 *{address}*\n\n"
+            "I'm here to help you resolve any issue quickly. "
+            "What happened?"
+        ),
+        "welcome_unknown": (
+            "👋 Hello! I'm the Asia Alliance Bank assistant.\n\n"
+            "How can I help you today?"
+        ),
+        "choose_lang":  "🌐 Choose your language:",
+        "lang_saved":   "✅ Language set: English",
+
+        "main_menu":    "📋 Main menu. What's the issue?",
+        "btn_card":     "💳 Card problem",
+        "btn_cash":     "💵 Cash not dispensed",
+        "btn_office":   "📍 Nearest branch",
+        "btn_operator": "📞 Call operator",
+        "btn_back":     "◀️ Back",
+        "btn_home":     "🏠 Home",
+        "btn_no_help":  "⚠️ Issue not resolved",
+
+        "card_held_menu": "💳 I understand this is stressful. What exactly happened with your card?",
+        "btn_card_held":  "🔒 Card stuck in ATM",
+        "btn_card_other": "❓ Other card issue",
+
+        "card_step1": (
+            "😔 *Don't worry — we'll sort this out together!*\n\n"
+            "📋 *Step 1 of 3*\n\n"
             "Press the *Cancel* button on the ATM screen.\n"
             "⏱ Wait *30 seconds* — the ATM may return the card automatically.\n\n"
             "Did the card come out?"
         ),
-        "btn_yes":        "✅ Yes, card returned",
-        "btn_no":         "❌ No, it didn't",
-        "card_step1_ok":  "🎉 Great! Your card was returned.",
-        "card_step2":     (
-            "📋 *Step 2 of 3 — Temporary Block*\n\n"
-            "We recommend blocking your card immediately via the *Asia Alliance Bank* app.\n\n"
-            "1. Open the app\n"
-            "2. Go to «Cards» → select card\n"
-            "3. Tap «Temporary Block»\n\n"
-            "Did you block it?"
+        "btn_yes":      "✅ Yes, card returned",
+        "btn_no":       "❌ No, it didn't",
+
+        "card_step1_ok": (
+            "🎉 *Great! Your card has been returned.*\n\n"
+            "If you notice anything unusual during your next payment, "
+            "we'd recommend temporarily blocking your card via the app as a precaution.\n\n"
+            "Have a wonderful day! 😊"
         ),
-        "btn_blocked":    "🔐 Card blocked",
-        "btn_no_app":     "📵 No app",
-        "card_step3":     (
-            "📋 *Step 3 of 3 — Collect Card at Branch*\n\n"
-            "Your card will be held at the nearest branch.\n\n"
+
+        "card_step2": (
+            "📋 *Step 2 of 3 — Protect your money*\n\n"
+            "While your card is inside the ATM, it's important to block it immediately "
+            "so no one else can use it.\n\n"
+            "Open the *Asia Alliance Bank* app:\n"
+            "1️⃣ Go to «Cards» → select your card\n"
+            "2️⃣ Tap «Temporary Block»\n\n"
+            "Have you blocked it?"
+        ),
+        "btn_blocked":  "🔐 Yes, card blocked",
+        "btn_no_app":   "📵 I don't have the app",
+
+        "card_step3": (
+            "📋 *Step 3 of 3 — Collect your card at the branch*\n\n"
+            "Don't worry — your card is safe. "
+            "It's being held at the nearest branch for you.\n\n"
             "🏦 *{branch_name}*\n"
             "📍 {branch_address}\n"
             "📞 {branch_phone}\n"
             "🕐 {branch_hours}\n\n"
             "[📍 Get directions]({maps_url})\n\n"
-            "Please bring your passport."
+            "🪪 Please bring your passport. Your card will be returned immediately."
         ),
-        "no_cash_start":  "💵 *Cash Not Dispensed*\n\nEnter the amount (in UZS) the ATM failed to dispense.\nExample: *500000*",
-        "no_cash_invalid":"❌ Please enter numbers only. Example: *500000*",
-        "no_cash_confirm":"📝 Confirm your request:\n\n💰 Amount: *{amount:,.0f} UZS*\n🏧 ATM: {atm_id} — {address}\n🕐 Time: {time}\n\nCreate ticket?",
-        "btn_confirm":    "✅ Confirm",
-        "btn_cancel":     "❌ Cancel",
-        "ticket_created": "✅ *Ticket Created!*\n\n📋 Reference: *{ticket_no}*\n⏳ Processing time: 3 business days",
-        "nearest_office": "🏦 *Nearest Branch*\n\n*{name}*\n📍 {address}\n📞 {phone}\n🕐 {hours}\n\n[📍 Get directions]({maps_url})",
-        "operator_wait":  "📞 *Operator request sent*\n\nAverage wait: 2–5 minutes.",
-        "escalated":      "⚠️ *Your issue has been escalated*\n\nTicket: *{ticket_no}*\nYou will be contacted within 15 minutes.",
-        "operator_prefix":"👨‍💼 *Asia Alliance Bank Operator:*\n\n",
-        "error_atm":      "❌ ATM not found. Please scan the QR code again.",
-        "error_general":  "❌ An error occurred. Please try again later.",
+
+        "no_cash_start": (
+            "😔 *We completely understand how frustrating this is.*\n\n"
+            "Don't worry — your money is safe and we'll document everything.\n\n"
+            "📸 *Please do this right now:*\n"
+            "• Take a photo of the ATM screen\n"
+            "• Keep the receipt if the ATM printed one\n"
+            "• Screenshot any bank notification\n"
+            "• Wait 2–3 minutes — sometimes cash is dispensed with a delay\n\n"
+            "💬 Please enter the amount (in UZS) the ATM failed to dispense.\n"
+            "Example: *500000*"
+        ),
+        "no_cash_invalid": "❌ Please enter numbers only.\nExample: *500000*",
+        "no_cash_confirm": (
+            "📝 *Please confirm your request:*\n\n"
+            "💰 Amount: *{amount:,.0f} UZS*\n"
+            "🏧 ATM: {atm_id} — {address}\n"
+            "🕐 Time: {time}\n\n"
+            "Is everything correct? Shall I create the ticket?"
+        ),
+        "btn_confirm":  "✅ Yes, confirm",
+        "btn_cancel":   "❌ Cancel",
+
+        "ticket_created": (
+            "✅ *Ticket Created!*\n\n"
+            "📋 Reference number: *{ticket_no}*\n"
+            "⏳ Processing time: *3 business days*\n\n"
+            "Your money will be returned to your account automatically after verification.\n"
+            "We'll notify you when the status changes. 🙏"
+        ),
+
+        "nearest_office": (
+            "🏦 *Nearest Branch*\n\n"
+            "*{name}*\n"
+            "📍 {address}\n"
+            "📞 {phone}\n"
+            "🕐 {hours}\n\n"
+            "[📍 Get directions]({maps_url})"
+        ),
+
+        "operator_wait": (
+            "📞 *Your request has been received by an operator*\n\n"
+            "Average wait time: *2–5 minutes*.\n"
+            "The operator will message you right here in this chat.\n\n"
+            "Please stay connected 🙏"
+        ),
+
+        "escalated": (
+            "⚠️ *Your case has been escalated to a senior specialist*\n\n"
+            "📋 Reference: *{ticket_no}*\n\n"
+            "We sincerely apologize for the inconvenience. "
+            "A specialist will contact you within *15 minutes*."
+        ),
+
+        "operator_prefix": "👨‍💼 *Asia Alliance Bank Operator:*\n\n",
+        "error_atm":     "❌ ATM not found. Please scan the QR code again.",
+        "error_general": "❌ Something went wrong. Please try again or call an operator.",
     }
 }
 
