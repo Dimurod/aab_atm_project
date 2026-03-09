@@ -1,0 +1,21 @@
+# Секреты (КРИТИЧЕСКИ ВАЖНО)
+.env
+*.env
+android/app/google-services.json
+
+# Python (bot & backend)
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+
+# Flutter (atm_admin_flutter)
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+
+# Docker & OS
+.DS_Store
+node_modules/
