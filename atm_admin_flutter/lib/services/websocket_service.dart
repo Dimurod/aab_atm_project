@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WebSocketService {
-  static const String wsUrl = 'ws://192.168.1.109:8000/ws/admin';
+  static const String wsUrl = 'ws://192.168.1.107:8000/ws/admin';
 
   WebSocketChannel? _channel;
   final StreamController<Map<String, dynamic>> _controller =

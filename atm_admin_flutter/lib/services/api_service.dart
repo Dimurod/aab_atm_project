@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/models.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.1.109:8000/api';
+  static const String baseUrl = 'http://192.168.1.107:8000/api';
 
   // ── Tickets ──────────────────────────────────────────────────────
 
