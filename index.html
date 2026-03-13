@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#003087">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AAB Yordam">
+<title>Asia Alliance Bank — Yordam</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --navy: #003087;
+    --gold: #C8A951;
+    --light: #f0f4fb;
+    --white: #ffffff;
+    --green: #16a34a;
+    --red: #dc2626;
+    --gray: #64748b;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(160deg, #003087, #00205f);
+    padding: 16px 20px 20px;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 20px; right: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .bank-name { color: var(--white); font-size: 20px; font-weight: 700; letter-spacing: 0.3px; }
+  .bank-tagline { color: var(--gold); font-size: 12px; margin-top: 2px; }
+  .atm-badge {
+    margin-top: 14px;
+    background: rgba(200,169,81,0.12);
+    border: 1px solid rgba(200,169,81,0.35);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .atm-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+    flex-shrink: 0;
+  }
+  .atm-id { color: var(--white); font-size: 13px; font-weight: 600; }
+  .atm-addr { color: var(--gold); font-size: 11px; margin-top: 2px; }
+
+  /* LANG BAR */
+  .lang-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .lang-label { color: rgba(255,255,255,0.5); font-size: 11px; }
+  .lang-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* BODY */
+  .body {
+    background: var(--light);
+    flex: 1;
+    padding: 20px 16px;
+    transition: opacity 0.2s;
+  }
+  .body.fade { opacity: 0; }
+
+  /* SCREEN TITLE */
+  .screen-title {
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  /* BACK BTN */
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--navy);
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    padding: 0;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* PROBLEM CARDS */
+  .problem-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,48,135,0.08);
+    border: 1px solid rgba(0,48,135,0.05);
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+  }
+  .problem-card:active { transform: scale(0.98); }
+  .problem-icon {
+    font-size: 26px;
+    width: 48px; height: 48px;
+    background: #e8f0fb;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .problem-title { color: var(--navy); font-size: 15px; font-weight: 700; }
+  .problem-desc { color: var(--gray); font-size: 12px; margin-top: 3px; }
+  .problem-arrow { margin-left: auto; color: var(--gold); font-size: 22px; flex-shrink: 0; }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    box-shadow: 0 2px 8px rgba(0,48,135,0.07);
+  }
+  .step-num {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { color: #1e293b; font-size: 14px; padding-top: 5px; line-height: 1.5; }
+  .step-warn {
+    background: #fff9e6;
+    border: 1px solid #fde68a;
+  }
+  .step-warn .step-num { background: var(--gold); color: var(--navy); }
+  .step-warn .step-text { color: #92400e; }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .btn:active { opacity: 0.85; }
+  .btn-red {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+  }
+  .btn-navy {
+    background: linear-gradient(135deg, #003087, #0050c8);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(0,48,135,0.3);
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, #C8A951, #a8891e);
+    color: var(--navy);
+    box-shadow: 0 4px 16px rgba(200,169,81,0.3);
+  }
+  .btn-green {
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(74,222,128,0.3);
+  }
+
+  /* INPUT */
+  .input-field {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid #d0dcf0;
+    font-size: 15px;
+    color: var(--navy);
+    font-family: inherit;
+    outline: none;
+    margin: 10px 0 14px;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--navy); }
+
+  /* TICKET */
+  .ticket-box {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,48,135,0.1);
+  }
+  .check-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    box-shadow: 0 8px 24px rgba(74,222,128,0.35);
+  }
+  .ticket-title { color: var(--navy); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .ticket-desc { color: var(--gray); font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+  .ticket-num-box {
+    background: #e8f0fb;
+    border-radius: 12px;
+    padding: 12px 24px;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  .ticket-num-label { color: var(--gray); font-size: 11px; }
+  .ticket-num-val { color: var(--navy); font-size: 26px; font-weight: 700; letter-spacing: 3px; }
+  .ticket-atm { color: var(--gray); font-size: 12px; margin-bottom: 20px; }
+  .ticket-tip {
+    margin-top: 14px;
+    background: var(--white);
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  /* MAP */
+  .map-box {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,48,135,0.08);
+    margin-bottom: 14px;
+  }
+  .map-placeholder {
+    width: 100%;
+    height: 170px;
+    background: linear-gradient(135deg, #e8f0fb, #d0dcf0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+  }
+  .branch-info { padding: 14px 16px; }
+  .branch-name { color: var(--navy); font-size: 15px; font-weight: 700; }
+  .branch-addr { color: var(--gray); font-size: 13px; margin-top: 4px; }
+  .branch-time { color: var(--green); font-size: 13px; margin-top: 4px; font-weight: 600; }
+  .branch-phone { color: var(--navy); font-size: 13px; margin-top: 4px; }
+
+  /* OPERATOR */
+  .operator-box {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,48,135,0.08);
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .operator-icon {
+    font-size: 48px;
+    margin-bottom: 14px;
+  }
+  .operator-title { color: var(--navy); font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .operator-wait { color: var(--gray); font-size: 13px; margin-bottom: 6px; }
+  .operator-time { color: var(--green); font-size: 15px; font-weight: 700; }
+
+  /* QR EXPLAIN */
+  .qr-explain {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border: 1px solid rgba(200,169,81,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .qr-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+  }
+  .qr-text-title { color: var(--white); font-size: 13px; font-weight: 700; }
+  .qr-text-sub { color: var(--gold); font-size: 11px; margin-top: 3px; }
+
+  /* HIDDEN */
+  .screen { display: none; }
+  .screen.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="bank-name">Asia Alliance Bank</div>
+  <div class="bank-tagline" id="tagline">Odamlar uchun o'zimizning bank</div>
+  <div class="atm-badge">
+    <div class="atm-dot"></div>
+    <div>
+      <div class="atm-id" id="atm-id-text">Bankomat: MU-001</div>
+      <div class="atm-addr">ул. Сайрам, 20 · Мирзо-Улугбек</div>
+    </div>
+  </div>
+  <div class="lang-bar">
+    <span class="lang-label" id="lang-label">Til:</span>
+    <button class="lang-btn active" onclick="setLang('uz')">UZ</button>
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body" id="body">
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="qr-explain">
+      <div class="qr-icon">📱</div>
+      <div>
+        <div class="qr-text-title" id="qr-title">QR skan → shu sahifa</div>
+        <div class="qr-text-sub" id="qr-sub">Telegram siz. O'rnatish siz.</div>
+      </div>
+    </div>
+    <div class="screen-title" id="help-title">Qanday yordam kerak?</div>
+    <div class="problem-card" onclick="goTo('card')">
+      <div class="problem-icon">💳</div>
+      <div>
+        <div class="problem-title" id="p1-title">Kartam chiqmayapti</div>
+        <div class="problem-desc" id="p1-desc">Karta qolib ketdi</div>
+      </div>
+      <div class="problem-arrow">›</div>
+    </div>
+    <div class="problem-card" onclick="goTo('money')">
+      <div class="problem-icon">💵</div>
+      <div>
+        <div class="problem-title" id="p2-title">Pul chiqmadi</div>
+        <div class="problem-desc" id="p2-desc">Mablag' hisobdan yechildi</div>
+      </div>
+      <div class="problem-arrow">›</div>
+    </div>
+    <div class="problem-card" onclick="goTo('map')">
+      <div class="problem-icon">📍</div>
+      <div>
+        <div class="problem-title" id="p3-title">Eng yaqin filial</div>
+        <div class="problem-desc" id="p3-desc">Yo'l ko'rsating</div>
+      </div>
+      <div class="problem-arrow">›</div>
+    </div>
+    <div class="problem-card" onclick="goTo('operator')">
+      <div class="problem-icon">👨‍💼</div>
+      <div>
+        <div class="problem-title" id="p4-title">Operator kerak</div>
+        <div class="problem-desc" id="p4-desc">Jonli yordam</div>
+      </div>
+      <div class="problem-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- CARD SCREEN -->
+  <div class="screen" id="screen-card">
+    <button class="back-btn" onclick="goTo('home')">← <span id="back1">Orqaga</span></button>
+    <div class="screen-title" id="card-title">💳 Kartani olish uchun:</div>
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-text" id="card-s1">Bekor qilish tugmasini bosing</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-text" id="card-s2">30 soniya kuting</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-text" id="card-s3">Karta chiqmasa — kartani bloklang</div>
+    </div>
+    <div class="step-card step-warn">
+      <div class="step-num">!</div>
+      <div class="step-text" id="card-warn">Chekni saqlang va ekran rasmini oling</div>
+    </div>
+    <button class="btn btn-red" onclick="goTo('ticket')" id="block-btn">🔒 Kartani bloklash</button>
+  </div>
+
+  <!-- MONEY SCREEN -->
+  <div class="screen" id="screen-money">
+    <button class="back-btn" onclick="goTo('home')">← <span id="back2">Orqaga</span></button>
+    <div class="screen-title" id="money-title">💵 Qancha summa yechildi?</div>
+    <div class="step-card step-warn">
+      <div class="step-num">!</div>
+      <div class="step-text" id="money-warn">Xavotir olmang — pullar yo'qolmaydi. Biz hamma narsani qayd etamiz.</div>
+    </div>
+    <input class="input-field" type="text" id="amount-input" placeholder="Masalan: 500 000 so'm">
+    <button class="btn btn-navy" onclick="goTo('ticket')" id="send-btn">Ariza yuborish →</button>
+  </div>
+
+  <!-- MAP SCREEN -->
+  <div class="screen" id="screen-map">
+    <button class="back-btn" onclick="goTo('home')">← <span id="back3">Orqaga</span></button>
+    <div class="screen-title" id="map-title">📍 Eng yaqin filial</div>
+    <div class="map-box">
+      <div class="map-placeholder">🗺️</div>
+      <div class="branch-info">
+        <div class="branch-name">Asia Alliance Bank — Мирзо-Улугбек</div>
+        <div class="branch-addr">ул. Сайрам, 20</div>
+        <div class="branch-time" id="branch-time">🟢 18:00 gacha ochiq</div>
+        <div class="branch-phone">📞 +998 71 262-32-79</div>
+      </div>
+    </div>
+    <button class="btn btn-gold" onclick="window.open('https://maps.google.com/?q=41.332806,69.324137')" id="maps-btn">🗺️ Google Maps'da ochish</button>
+  </div>
+
+  <!-- OPERATOR SCREEN -->
+  <div class="screen" id="screen-operator">
+    <button class="back-btn" onclick="goTo('home')">← <span id="back4">Orqaga</span></button>
+    <div class="screen-title" id="op-title">👨‍💼 Operator ulanmoqda</div>
+    <div class="operator-box">
+      <div class="operator-icon">👨‍💼</div>
+      <div class="operator-title" id="op-connect">Operator ulanmoqda...</div>
+      <div class="operator-wait" id="op-wait">O'rtacha kutish vaqti:</div>
+      <div class="operator-time">2-3 min</div>
+    </div>
+    <button class="btn btn-navy" onclick="goTo('ticket')" id="op-btn">Ariza yaratish →</button>
+  </div>
+
+  <!-- TICKET SCREEN -->
+  <div class="screen" id="screen-ticket">
+    <div class="ticket-box">
+      <div class="check-circle">✓</div>
+      <div class="ticket-title" id="ticket-title">Ariza qabul qilindi!</div>
+      <div class="ticket-desc" id="ticket-desc">Operator tez orada siz bilan bog'lanadi</div>
+      <div class="ticket-num-box">
+        <div class="ticket-num-label" id="ticket-num-label">Ariza raqami</div>
+        <div class="ticket-num-val" id="ticket-num">T-0000</div>
+      </div>
+      <div class="ticket-atm">MU-001 · ул. Сайрам, 20</div>
+      <button class="btn btn-green" onclick="goTo('home')" id="home-btn">Bosh sahifa</button>
+    </div>
+    <div class="ticket-tip" id="ticket-tip">
+      💡 Operatsiya chekini dalil sifatida saqlang
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+let currentLang = 'uz';
+let currentScreen = 'home';
+
+// ── Translations ───────────────────────────────────────────────────
+const T = {
+  uz: {
+    tagline: "Odamlar uchun o'zimizning bank",
+    langLabel: "Til:",
+    atmText: "Bankomat: MU-001",
+    qrTitle: "QR skan → shu sahifa",
+    qrSub: "Telegram siz. O'rnatish siz.",
+    helpTitle: "Qanday yordam kerak?",
+    p1: ["Kartam chiqmayapti", "Karta qolib ketdi"],
+    p2: ["Pul chiqmadi", "Mablag' hisobdan yechildi"],
+    p3: ["Eng yaqin filial", "Yo'l ko'rsating"],
+    p4: ["Operator kerak", "Jonli yordam"],
+    back: "Orqaga",
+    cardTitle: "💳 Kartani olish uchun:",
+    cardS1: "Bekor qilish tugmasini bosing",
+    cardS2: "30 soniya kuting",
+    cardS3: "Karta chiqmasa — kartani bloklang",
+    cardWarn: "Chekni saqlang va ekran rasmini oling",
+    blockBtn: "🔒 Kartani bloklash",
+    moneyTitle: "💵 Qancha summa yechildi?",
+    moneyWarn: "Xavotir olmang — pullar yo'qolmaydi. Biz hamma narsani qayd etamiz.",
+    amountPH: "Masalan: 500 000 so'm",
+    sendBtn: "Ariza yuborish →",
+    mapTitle: "📍 Eng yaqin filial",
+    branchTime: "🟢 18:00 gacha ochiq",
+    mapsBtn: "🗺️ Google Maps'da ochish",
+    opTitle: "👨‍💼 Operator ulanmoqda",
+    opConnect: "Operator ulanmoqda...",
+    opWait: "O'rtacha kutish vaqti:",
+    opBtn: "Ariza yaratish →",
+    ticketTitle: "Ariza qabul qilindi!",
+    ticketDesc: "Operator tez orada siz bilan bog'lanadi",
+    ticketNumLabel: "Ariza raqami",
+    homeBtn: "Bosh sahifa",
+    ticketTip: "💡 Operatsiya chekini dalil sifatida saqlang",
+  },
+  ru: {
+    tagline: "Банк для людей",
+    langLabel: "Язык:",
+    atmText: "Банкомат: MU-001",
+    qrTitle: "Скан QR → эта страница",
+    qrSub: "Без Telegram. Без установки.",
+    helpTitle: "Чем помочь?",
+    p1: ["Карта не выходит", "Карта застряла"],
+    p2: ["Деньги не выдало", "Сумма списана со счёта"],
+    p3: ["Ближайший офис", "Показать маршрут"],
+    p4: ["Нужен оператор", "Живая помощь"],
+    back: "Назад",
+    cardTitle: "💳 Что делать с картой:",
+    cardS1: "Нажмите кнопку Отмена",
+    cardS2: "Подождите 30 секунд",
+    cardS3: "Если карта не вышла — заблокируйте её",
+    cardWarn: "Сохраните чек и сфотографируйте экран банкомата",
+    blockBtn: "🔒 Заблокировать карту",
+    moneyTitle: "💵 Какая сумма списана?",
+    moneyWarn: "Не волнуйтесь — деньги никуда не пропадут. Мы всё зафиксируем.",
+    amountPH: "Например: 500 000 сум",
+    sendBtn: "Отправить заявку →",
+    mapTitle: "📍 Ближайший офис",
+    branchTime: "🟢 Открыто до 18:00",
+    mapsBtn: "🗺️ Открыть в Google Maps",
+    opTitle: "👨‍💼 Подключение оператора",
+    opConnect: "Оператор подключается...",
+    opWait: "Среднее время ожидания:",
+    opBtn: "Создать заявку →",
+    ticketTitle: "Заявка принята!",
+    ticketDesc: "Оператор свяжется с вами в ближайшее время",
+    ticketNumLabel: "Номер заявки",
+    homeBtn: "На главную",
+    ticketTip: "💡 Сохраните чек операции как доказательство",
+  },
+  en: {
+    tagline: "Your bank for people",
+    langLabel: "Language:",
+    atmText: "ATM: MU-001",
+    qrTitle: "Scan QR → this page",
+    qrSub: "No Telegram. No install.",
+    helpTitle: "How can we help?",
+    p1: ["Card is stuck", "Card won't come out"],
+    p2: ["Cash not dispensed", "Amount was debited"],
+    p3: ["Nearest branch", "Show directions"],
+    p4: ["Need operator", "Live support"],
+    back: "Back",
+    cardTitle: "💳 What to do:",
+    cardS1: "Press the Cancel button",
+    cardS2: "Wait 30 seconds",
+    cardS3: "If card is stuck — block it immediately",
+    cardWarn: "Save your receipt and take a screenshot",
+    blockBtn: "🔒 Block my card",
+    moneyTitle: "💵 How much was debited?",
+    moneyWarn: "Don't worry — your money is safe. We will record everything.",
+    amountPH: "E.g. 500 000 UZS",
+    sendBtn: "Submit request →",
+    mapTitle: "📍 Nearest branch",
+    branchTime: "🟢 Open until 18:00",
+    mapsBtn: "🗺️ Open in Google Maps",
+    opTitle: "👨‍💼 Connecting operator",
+    opConnect: "Connecting operator...",
+    opWait: "Average wait time:",
+    opBtn: "Create ticket →",
+    ticketTitle: "Request submitted!",
+    ticketDesc: "An operator will contact you shortly",
+    ticketNumLabel: "Ticket number",
+    homeBtn: "Home",
+    ticketTip: "💡 Save your transaction receipt as proof",
+  }
+};
+
+// ── Apply translations ─────────────────────────────────────────────
+function applyLang(l) {
+  const t = T[l];
+  document.getElementById('tagline').textContent = t.tagline;
+  document.getElementById('lang-label').textContent = t.langLabel;
+  document.getElementById('atm-id-text').textContent = t.atmText;
+  document.getElementById('qr-title').textContent = t.qrTitle;
+  document.getElementById('qr-sub').textContent = t.qrSub;
+  document.getElementById('help-title').textContent = t.helpTitle;
+  document.getElementById('p1-title').textContent = t.p1[0];
+  document.getElementById('p1-desc').textContent = t.p1[1];
+  document.getElementById('p2-title').textContent = t.p2[0];
+  document.getElementById('p2-desc').textContent = t.p2[1];
+  document.getElementById('p3-title').textContent = t.p3[0];
+  document.getElementById('p3-desc').textContent = t.p3[1];
+  document.getElementById('p4-title').textContent = t.p4[0];
+  document.getElementById('p4-desc').textContent = t.p4[1];
+  document.getElementById('back1').textContent = t.back;
+  document.getElementById('back2').textContent = t.back;
+  document.getElementById('back3').textContent = t.back;
+  document.getElementById('back4').textContent = t.back;
+  document.getElementById('card-title').textContent = t.cardTitle;
+  document.getElementById('card-s1').textContent = t.cardS1;
+  document.getElementById('card-s2').textContent = t.cardS2;
+  document.getElementById('card-s3').textContent = t.cardS3;
+  document.getElementById('card-warn').textContent = t.cardWarn;
+  document.getElementById('block-btn').textContent = t.blockBtn;
+  document.getElementById('money-title').textContent = t.moneyTitle;
+  document.getElementById('money-warn').textContent = t.moneyWarn;
+  document.getElementById('amount-input').placeholder = t.amountPH;
+  document.getElementById('send-btn').textContent = t.sendBtn;
+  document.getElementById('map-title').textContent = t.mapTitle;
+  document.getElementById('branch-time').textContent = t.branchTime;
+  document.getElementById('maps-btn').textContent = t.mapsBtn;
+  document.getElementById('op-title').textContent = t.opTitle;
+  document.getElementById('op-connect').textContent = t.opConnect;
+  document.getElementById('op-wait').textContent = t.opWait;
+  document.getElementById('op-btn').textContent = t.opBtn;
+  document.getElementById('ticket-title').textContent = t.ticketTitle;
+  document.getElementById('ticket-desc').textContent = t.ticketDesc;
+  document.getElementById('ticket-num-label').textContent = t.ticketNumLabel;
+  document.getElementById('home-btn').textContent = t.homeBtn;
+  document.getElementById('ticket-tip').textContent = t.ticketTip;
+}
+
+function setLang(l) {
+  currentLang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyLang(l);
+}
+
+// ── Navigation ─────────────────────────────────────────────────────
+function goTo(screen) {
+  const body = document.getElementById('body');
+  body.classList.add('fade');
+  setTimeout(() => {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    if (screen === 'ticket') {
+      document.getElementById('ticket-num').textContent = 'T-' + (1000 + Math.floor(Math.random() * 9000));
+    }
+    body.classList.remove('fade');
+    window.scrollTo(0, 0);
+  }, 180);
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+applyLang('uz');
+</script>
+</body>
+</html>
