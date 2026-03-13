@@ -492,6 +492,7 @@
 // ── State ──────────────────────────────────────────────────────────
 let currentLang = 'uz';
 let currentScreen = 'home';
+let prevScreen = 'home';
 
 // ── Translations ───────────────────────────────────────────────────
 const T = {
@@ -654,15 +655,42 @@ function setLang(l) {
   applyLang(l);
 }
 
+// ── API ────────────────────────────────────────────────────────────
+const API_URL = 'https://smart-atm-backend.onrender.com';
+
+async function submitTicket(category) {
+  try {
+    const amount = document.getElementById('amount-input').value || null;
+    const res = await fetch(`${API_URL}/api/tickets`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        atm_id: 'MU-001',
+        category: category,
+        amount: amount ? parseFloat(amount.replace(/[^0-9.]/g, '')) : null,
+        source: 'pwa'
+      })
+    });
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    return data.ticket_no || data.id || ('T-' + (1000 + Math.floor(Math.random() * 9000)));
+  } catch(e) {
+    console.log('API unavailable, using local number');
+    return 'T-' + (1000 + Math.floor(Math.random() * 9000));
+  }
+}
+
 // ── Navigation ─────────────────────────────────────────────────────
 function goTo(screen) {
   const body = document.getElementById('body');
   body.classList.add('fade');
-  setTimeout(() => {
+  setTimeout(async () => {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + screen).classList.add('active');
     if (screen === 'ticket') {
-      document.getElementById('ticket-num').textContent = 'T-' + (1000 + Math.floor(Math.random() * 9000));
+      document.getElementById('ticket-num').textContent = '...';
+      const num = await submitTicket(currentScreen);
+      document.getElementById('ticket-num').textContent = num;
     }
     body.classList.remove('fade');
     window.scrollTo(0, 0);
