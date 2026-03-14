@@ -338,7 +338,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="bank-name">Asia Alliance Bank</div>
   <div class="bank-tagline" id="tagline">Odamlar uchun o'zimizning bank</div>
@@ -357,10 +356,8 @@
   </div>
 </div>
 
-<!-- BODY -->
 <div class="body" id="body">
 
-  <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="qr-explain">
       <div class="qr-icon">📱</div>
@@ -404,7 +401,6 @@
     </div>
   </div>
 
-  <!-- CARD SCREEN -->
   <div class="screen" id="screen-card">
     <button class="back-btn" onclick="goTo('home')">← <span id="back1">Orqaga</span></button>
     <div class="screen-title" id="card-title">💳 Kartani olish uchun:</div>
@@ -427,7 +423,6 @@
     <button class="btn btn-red" onclick="goTo('ticket')" id="block-btn">🔒 Kartani bloklash</button>
   </div>
 
-  <!-- MONEY SCREEN -->
   <div class="screen" id="screen-money">
     <button class="back-btn" onclick="goTo('home')">← <span id="back2">Orqaga</span></button>
     <div class="screen-title" id="money-title">💵 Qancha summa yechildi?</div>
@@ -439,7 +434,6 @@
     <button class="btn btn-navy" onclick="goTo('ticket')" id="send-btn">Ariza yuborish →</button>
   </div>
 
-  <!-- MAP SCREEN -->
   <div class="screen" id="screen-map">
     <button class="back-btn" onclick="goTo('home')">← <span id="back3">Orqaga</span></button>
     <div class="screen-title" id="map-title">📍 Eng yaqin filial</div>
@@ -455,7 +449,6 @@
     <button class="btn btn-gold" onclick="window.open('https://maps.google.com/?q=41.332806,69.324137')" id="maps-btn">🗺️ Google Maps'da ochish</button>
   </div>
 
-  <!-- OPERATOR SCREEN -->
   <div class="screen" id="screen-operator">
     <button class="back-btn" onclick="goTo('home')">← <span id="back4">Orqaga</span></button>
     <div class="screen-title" id="op-title">👨‍💼 Operator ulanmoqda</div>
@@ -468,7 +461,6 @@
     <button class="btn btn-navy" onclick="goTo('ticket')" id="op-btn">Ariza yaratish →</button>
   </div>
 
-  <!-- TICKET SCREEN -->
   <div class="screen" id="screen-ticket">
     <div class="ticket-box">
       <div class="check-circle">✓</div>
@@ -684,14 +676,30 @@ async function submitTicket(category) {
 function goTo(screen) {
   const body = document.getElementById('body');
   body.classList.add('fade');
+  
+  prevScreen = currentScreen;
+  currentScreen = screen;
+  
   setTimeout(async () => {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + screen).classList.add('active');
+    
     if (screen === 'ticket') {
       document.getElementById('ticket-num').textContent = '...';
-      const num = await submitTicket(currentScreen);
+      
+      const categoryMap = {
+        'card': 'card_stuck',
+        'money': 'cash_not_dispensed',
+        'operator': 'operator_needed',
+        'map': 'info'
+      };
+      
+      const cat = categoryMap[prevScreen] || 'other';
+      const num = await submitTicket(cat);
+      
       document.getElementById('ticket-num').textContent = num;
     }
+    
     body.classList.remove('fade');
     window.scrollTo(0, 0);
   }, 180);
