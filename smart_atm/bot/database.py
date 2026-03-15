@@ -3,10 +3,10 @@ import asyncpg
 import os
 from typing import Optional, Dict, Any
 from datetime import datetime
-
+ 
 _pool: Optional[asyncpg.Pool] = None
-
-
+ 
+ 
 async def get_pool() -> asyncpg.Pool:
     global _pool
     if _pool is None:
@@ -16,19 +16,19 @@ async def get_pool() -> asyncpg.Pool:
             max_size=10
         )
     return _pool
-
-
+ 
+ 
 async def close_pool():
     global _pool
     if _pool:
         await _pool.close()
         _pool = None
-
-
+ 
+ 
 # ──────────────────────────────────────────────────────────────────────
 #  ATM
 # ──────────────────────────────────────────────────────────────────────
-
+ 
 async def get_atm(atm_id: str) -> Optional[dict]:
     pool = await get_pool()
     row = await pool.fetchrow(
@@ -43,8 +43,8 @@ async def get_atm(atm_id: str) -> Optional[dict]:
         atm_id
     )
     return dict(row) if row else None
-
-
+ 
+ 
 async def get_nearest_branch(latitude: float, longitude: float) -> Optional[dict]:
     pool = await get_pool()
     row = await pool.fetchrow(
@@ -62,12 +62,12 @@ async def get_nearest_branch(latitude: float, longitude: float) -> Optional[dict
         latitude, longitude
     )
     return dict(row) if row else None
-
-
+ 
+ 
 # ──────────────────────────────────────────────────────────────────────
 #  Users
 # ──────────────────────────────────────────────────────────────────────
-
+ 
 async def upsert_user(telegram_id: int, first_name: str = None, username: str = None) -> dict:
     pool = await get_pool()
     row = await pool.fetchrow(
@@ -81,27 +81,27 @@ async def upsert_user(telegram_id: int, first_name: str = None, username: str = 
         telegram_id, first_name, username
     )
     return dict(row)
-
-
+ 
+ 
 async def get_user_lang(telegram_id: int) -> str:
     pool = await get_pool()
     row = await pool.fetchrow(
         "SELECT language FROM users WHERE telegram_id = $1", telegram_id
     )
     return row["language"] if row else "ru"
-
-
+ 
+ 
 async def set_user_lang(telegram_id: int, lang: str):
     pool = await get_pool()
     await pool.execute(
         "UPDATE users SET language = $1 WHERE telegram_id = $2", lang, telegram_id
     )
-
-
+ 
+ 
 # ──────────────────────────────────────────────────────────────────────
 #  Sessions (FSM state)
 # ──────────────────────────────────────────────────────────────────────
-
+ 
 async def save_session(telegram_id: int, state: str, data: dict = None, atm_id: str = None):
     pool = await get_pool()
     import json
@@ -114,8 +114,8 @@ async def save_session(telegram_id: int, state: str, data: dict = None, atm_id: 
         """,
         telegram_id, state, json.dumps(data or {}), atm_id
     )
-
-
+ 
+ 
 async def get_session(telegram_id: int) -> Optional[dict]:
     pool = await get_pool()
     row = await pool.fetchrow(
@@ -127,19 +127,19 @@ async def get_session(telegram_id: int) -> Optional[dict]:
     result = dict(row)
     result["data"] = json.loads(result["data"]) if result["data"] else {}
     return result
-
-
+ 
+ 
 async def clear_session(telegram_id: int):
     pool = await get_pool()
     await pool.execute(
         "DELETE FROM sessions WHERE telegram_id = $1", telegram_id
     )
-
-
+ 
+ 
 # ──────────────────────────────────────────────────────────────────────
 #  Tickets
 # ──────────────────────────────────────────────────────────────────────
-
+ 
 async def create_ticket(
     telegram_id: int,
     atm_id: str,
@@ -157,39 +157,43 @@ async def create_ticket(
         telegram_id, atm_id, category, amount, description
     )
     return dict(row)
-
-
+ 
+ 
 async def get_ticket(ticket_id: int) -> Optional[dict]:
     pool = await get_pool()
     row = await pool.fetchrow("SELECT * FROM tickets WHERE id = $1", ticket_id)
     return dict(row) if row else None
-
-
+ 
+ 
 async def escalate_ticket(ticket_id: int):
     pool = await get_pool()
     await pool.execute(
         "UPDATE tickets SET status = 'escalated', escalated = TRUE, updated_at = NOW() WHERE id = $1",
         ticket_id
     )
-
-
+ 
+ 
 async def update_ticket_status(ticket_id: int, status: str):
     pool = await get_pool()
     await pool.execute(
         "UPDATE tickets SET status = $1, updated_at = NOW() WHERE id = $2",
         status, ticket_id
     )
-
-
+ 
+ 
 # ──────────────────────────────────────────────────────────────────────
 #  Admin queries
 # ──────────────────────────────────────────────────────────────────────
-
+ 
 async def get_open_tickets(limit: int = 50) -> list:
     pool = await get_pool()
     rows = await pool.fetch(
         """
-        SELECT t.*, u.first_name, u.username, a.address AS atm_address
+        SELECT t.id, t.ticket_no, t.atm_id, t.category, t.status,
+               t.escalated, t.amount, t.created_at, t.updated_at,
+               t.phone, t.source,
+               u.first_name, u.username, u.telegram_id,
+               a.address AS atm_address
         FROM tickets t
         LEFT JOIN users u ON u.telegram_id = t.telegram_id
         LEFT JOIN atm_devices a ON a.atm_id = t.atm_id
@@ -200,9 +204,10 @@ async def get_open_tickets(limit: int = 50) -> list:
         limit
     )
     return [dict(r) for r in rows]
-
-
+ 
+ 
 async def get_all_atms() -> list:
     pool = await get_pool()
     rows = await pool.fetch("SELECT * FROM atm_devices ORDER BY atm_id")
     return [dict(r) for r in rows]
+ 
