@@ -145,6 +145,8 @@ async def create_ticket(body: TicketCreate):
             "atm_id": body.atm_id,
             "category": body.category,
             "source": body.source,
+            "phone": body.phone,
+            "amount": body.amount,
         })
     logger.info(f"✅ New PWA ticket: {ticket_no} | ATM: {body.atm_id} | {body.category}")
     return {"id": row["id"], "ticket_no": row["ticket_no"]}
