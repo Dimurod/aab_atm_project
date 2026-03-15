@@ -83,6 +83,7 @@ class TicketCreate(BaseModel):
     category: str
     amount: Optional[float] = None
     source: str = "pwa"
+    phone: Optional[str] = None
  
  
 # ── Webhook receiver ────────────────────────────────────────────────
@@ -131,10 +132,10 @@ async def create_ticket(body: TicketCreate):
         count = await conn.fetchval("SELECT COUNT(*) FROM tickets")
         ticket_no = f"T-{1000 + count + 1}"
         row = await conn.fetchrow(
-            """INSERT INTO tickets (atm_id, category, amount, source, status, ticket_no)
-               VALUES ($1, $2, $3, $4, 'open', $5)
+            """INSERT INTO tickets (atm_id, category, amount, source, status, ticket_no, phone)
+               VALUES ($1, $2, $3, $4, 'open', $5, $6)
                RETURNING id, ticket_no""",
-            body.atm_id, body.category, body.amount, body.source, ticket_no
+            body.atm_id, body.category, body.amount, body.source, ticket_no, body.phone
         )
         # Broadcast to Flutter dashboard
         await manager.broadcast({
