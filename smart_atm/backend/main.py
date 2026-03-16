@@ -230,3 +230,164 @@ async def startup():
 async def shutdown():
     from bot.database import close_pool
     await close_pool()
+ 
+# ── ATM Monitoring ───────────────────────────────────────────────────
+ 
+class ATMPing(BaseModel):
+    atm_id: str
+    cash_level: int        # 0-100 %
+    paper_level: int       # 0-100 %
+    is_online: bool = True
+    card_jam: bool = False
+    secret: Optional[str] = None
+ 
+ATM_PING_SECRET = os.getenv("ATM_PING_SECRET", "atm_secret_2026")
+ 
+@app.post("/api/monitoring/ping")
+async def atm_ping(body: ATMPing):
+    """
+    Банкомат (или симулятор) сообщает о своём статусе.
+    Вызывается каждые 5 минут.
+    Автоматически создаёт заявки при критических уровнях.
+    """
+    # Простая защита
+    if body.secret and body.secret != ATM_PING_SECRET:
+        raise HTTPException(status_code=403, detail="Invalid secret")
+ 
+    from bot.database import get_pool
+    pool = await get_pool()
+ 
+    async with pool.acquire() as conn:
+        # Обновляем статус банкомата
+        await conn.execute("""
+            INSERT INTO atm_status (atm_id, cash_level, paper_level, is_online, card_jam, last_ping, updated_at)
+            VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+            ON CONFLICT (atm_id) DO UPDATE SET
+                cash_level  = $2,
+                paper_level = $3,
+                is_online   = $4,
+                card_jam    = $5,
+                last_ping   = NOW(),
+                updated_at  = NOW()
+        """, body.atm_id, body.cash_level, body.paper_level, body.is_online, body.card_jam)
+ 
+        # ── АВТО-ЗАЯВКИ при критических уровнях ──
+        auto_tickets = []
+ 
+        # Наличные < 15% → авто-заявка
+        if body.cash_level < 15:
+            auto_tickets.append({
+                "category": "cash_low",
+                "msg": f"⚠️ АВТО: Критически мало наличных — {body.cash_level}%. Требуется инкассация!"
+            })
+ 
+        # Бумага < 10% → авто-заявка
+        if body.paper_level < 10:
+            auto_tickets.append({
+                "category": "paper_low",
+                "msg": f"⚠️ АВТО: Заканчивается чековая лента — {body.paper_level}%. Требуется обслуживание!"
+            })
+ 
+        # Карта застряла → авто-заявка
+        if body.card_jam:
+            auto_tickets.append({
+                "category": "card_stuck",
+                "msg": f"🔴 АВТО: Карта застряла в банкомате {body.atm_id}!"
+            })
+ 
+        # Банкомат офлайн → авто-заявка
+        if not body.is_online:
+            auto_tickets.append({
+                "category": "atm_offline",
+                "msg": f"🔴 АВТО: Банкомат {body.atm_id} не отвечает!"
+            })
+ 
+        created_tickets = []
+        for at in auto_tickets:
+            # Проверяем нет ли уже открытой заявки такого типа
+            existing = await conn.fetchval("""
+                SELECT id FROM tickets
+                WHERE atm_id = $1 AND category = $2
+                AND status IN ('open', 'in_progress')
+                AND source = 'auto'
+                LIMIT 1
+            """, body.atm_id, at["category"])
+ 
+            if not existing:
+                count = await conn.fetchval("SELECT COUNT(*) FROM tickets")
+                ticket_no = f"T-{1000 + count + 1}"
+                row = await conn.fetchrow("""
+                    INSERT INTO tickets (atm_id, category, source, status, ticket_no)
+                    VALUES ($1, $2, 'auto', 'open', $3)
+                    RETURNING id, ticket_no
+                """, body.atm_id, at["category"], ticket_no)
+ 
+                created_tickets.append(row["ticket_no"])
+ 
+                # Уведомляем Flutter в реальном времени
+                await manager.broadcast({
+                    "event": "new_ticket",
+                    "ticket_id": row["id"],
+                    "ticket_no": row["ticket_no"],
+                    "atm_id": body.atm_id,
+                    "category": at["category"],
+                    "source": "auto",
+                    "message": at["msg"],
+                })
+                logger.warning(f"🤖 AUTO-TICKET: {ticket_no} | {body.atm_id} | {at['category']}")
+ 
+    # Уведомляем Flutter об обновлении статуса
+    await manager.broadcast({
+        "event": "atm_status_update",
+        "atm_id": body.atm_id,
+        "cash_level": body.cash_level,
+        "paper_level": body.paper_level,
+        "is_online": body.is_online,
+        "card_jam": body.card_jam,
+    })
+ 
+    return {
+        "ok": True,
+        "atm_id": body.atm_id,
+        "auto_tickets": created_tickets
+    }
+ 
+ 
+@app.get("/api/monitoring/atms")
+async def get_atm_monitoring():
+    """Статус всех банкоматов для Flutter вкладки Мониторинг."""
+    from bot.database import get_pool
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT
+                a.atm_id, a.address, a.working_hours,
+                s.cash_level, s.paper_level, s.is_online,
+                s.card_jam, s.last_ping,
+                (SELECT COUNT(*) FROM tickets t
+                 WHERE t.atm_id = a.atm_id
+                 AND t.status IN ('open','in_progress')) AS open_tickets
+            FROM atm_devices a
+            LEFT JOIN atm_status s ON s.atm_id = a.atm_id
+            ORDER BY a.atm_id
+        """)
+    return {"atms": [dict(r) for r in rows]}
+ 
+ 
+@app.get("/api/monitoring/alerts")
+async def get_alerts():
+    """Критические события — для уведомлений."""
+    from bot.database import get_pool
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("""
+            SELECT atm_id, cash_level, paper_level, is_online, card_jam, last_ping
+            FROM atm_status
+            WHERE cash_level < 15
+               OR paper_level < 10
+               OR is_online = FALSE
+               OR card_jam = TRUE
+            ORDER BY atm_id
+        """)
+    return {"alerts": [dict(r) for r in rows]}
+ 
