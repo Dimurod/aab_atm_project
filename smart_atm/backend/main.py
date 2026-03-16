@@ -361,7 +361,7 @@ async def get_atm_monitoring():
     async with pool.acquire() as conn:
         rows = await conn.fetch("""
             SELECT
-                a.atm_id, a.address, a.working_hours,
+                a.atm_id, a.address, a.status AS atm_status,
                 s.cash_level, s.paper_level, s.is_online,
                 s.card_jam, s.last_ping,
                 (SELECT COUNT(*) FROM tickets t
@@ -390,4 +390,3 @@ async def get_alerts():
             ORDER BY atm_id
         """)
     return {"alerts": [dict(r) for r in rows]}
- 
