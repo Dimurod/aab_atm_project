@@ -8,6 +8,8 @@ import 'screens/tickets_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/map_screen.dart' show StatsScreen;
 import 'screens/monitoring_screen.dart';
+import 'screens/login_screen.dart';
+import 'services/api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,13 +26,53 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'AAB ATM Admin',
         theme: buildTheme(),
-        home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
+        home: const AuthGate(),
+        routes: {
+          '/home': (_) => const HomeScreen(),
+          '/login': (_) => const LoginScreen(),
+        },
       ),
     );
   }
 }
 
+// ── Проверяем авторизацию при запуске ────────────────────────────
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  @override
+  void initState() {
+    super.initState();
+    _check();
+  }
+
+  Future<void> _check() async {
+    final loggedIn = await ApiService.isLoggedIn();
+    if (!mounted) return;
+    if (loggedIn) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF0A1628),
+      body: Center(
+        child: CircularProgressIndicator(color: Color(0xFFC8A951)),
+      ),
+    );
+  }
+}
+
+// ── Главный экран ─────────────────────────────────────────────────
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   @override
@@ -46,6 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
     MapScreen(),
     StatsScreen(),
   ];
+
+  Future<void> _logout() async {
+    await ApiService.logout();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('Asia Alliance Bank'),
         ]),
         actions: [
+          // Live индикатор
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 8),
             child: Row(children: [
               Container(
                 width: 7,
@@ -94,6 +143,38 @@ class _HomeScreenState extends State<HomeScreen> {
               const Text('Live',
                   style: TextStyle(color: Color(0xFF7A8BA8), fontSize: 12)),
             ]),
+          ),
+          // Кнопка выхода
+          IconButton(
+            icon: const Icon(Icons.logout, size: 20),
+            tooltip: 'Выйти',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  backgroundColor: const Color(0xFF132040),
+                  title: const Text('Выход',
+                      style: TextStyle(color: Colors.white)),
+                  content: const Text('Вы уверены что хотите выйти?',
+                      style: TextStyle(color: Colors.white70)),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Отмена',
+                          style: TextStyle(color: Colors.white54)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _logout();
+                      },
+                      child: const Text('Выйти',
+                          style: TextStyle(color: Color(0xFFC8A951))),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

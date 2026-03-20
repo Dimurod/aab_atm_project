@@ -390,3 +390,67 @@ async def get_alerts():
             ORDER BY atm_id
         """)
     return {"alerts": [dict(r) for r in rows]}
+ 
+ 
+# ── AUTH ──────────────────────────────────────────────────────────────
+ 
+import hashlib
+import secrets
+from datetime import datetime, timedelta
+ 
+# Простые учётные данные операторов (в продакшне — из БД)
+# Пароли хранятся как SHA256 хэши
+OPERATORS = {
+    "admin":    hashlib.sha256("admin2026".encode()).hexdigest(),
+    "operator": hashlib.sha256("operator2026".encode()).hexdigest(),
+    "dimurod":  hashlib.sha256("dimurod2026".encode()).hexdigest(),
+}
+ 
+# Хранилище токенов (в продакшне — Redis или БД)
+_tokens: dict = {}
+ 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+ 
+@app.post("/api/auth/login")
+async def login(body: LoginRequest):
+    """Вход оператора — возвращает JWT-подобный токен."""
+    password_hash = hashlib.sha256(body.password.encode()).hexdigest()
+    if body.username not in OPERATORS:
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+    if OPERATORS[body.username] != password_hash:
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+ 
+    # Генерируем токен
+    token = secrets.token_hex(32)
+    _tokens[token] = {
+        "username": body.username,
+        "created_at": datetime.now(),
+        "expires_at": datetime.now() + timedelta(hours=8),
+    }
+    logger.info(f"✅ Оператор вошёл: {body.username}")
+    return {"token": token, "username": body.username}
+ 
+ 
+@app.post("/api/auth/logout")
+async def logout(x_auth_token: str = Header(None)):
+    """Выход оператора."""
+    if x_auth_token and x_auth_token in _tokens:
+        del _tokens[x_auth_token]
+    return {"ok": True}
+ 
+ 
+def verify_token(authorization: str = Header(None)):
+    """Проверка токена — используется как зависимость."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Требуется авторизация")
+    token = authorization.replace("Bearer ", "")
+    if token not in _tokens:
+        raise HTTPException(status_code=401, detail="Недействительный токен")
+    info = _tokens[token]
+    if datetime.now() > info["expires_at"]:
+        del _tokens[token]
+        raise HTTPException(status_code=401, detail="Токен истёк")
+    return info
+ 
