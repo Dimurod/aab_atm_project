@@ -1,19 +1,16 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'theme.dart';
 import 'providers/app_provider.dart';
-import 'services/notification_service.dart';
 import 'screens/tickets_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/map_screen.dart' show StatsScreen;
+import 'screens/monitoring_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await Firebase.initializeApp();
-  //await NotificationService.init();
   runApp(const MyApp());
 }
 
@@ -45,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _screens = const [
     TicketsScreen(),
+    MonitoringScreen(),
     MapScreen(),
     StatsScreen(),
   ];
@@ -69,17 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Center(
-                child: Text('A',
-                    style: TextStyle(
-                        color: Color(0xFF0A1628),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 16))),
+              child: Text('A',
+                  style: TextStyle(
+                    color: Color(0xFF0A1628),
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  )),
+            ),
           ),
           const SizedBox(width: 10),
           const Text('Asia Alliance Bank'),
         ]),
         actions: [
-          // Live indicator
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Row(children: [
@@ -110,6 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Icon(Icons.list_alt_rounded),
             ),
             label: 'Заявки',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.monitor_heart_outlined),
+            label: 'Мониторинг',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.location_on_outlined),
